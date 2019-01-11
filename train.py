@@ -497,6 +497,7 @@ def main(args=None):
         epochs=args.epochs,
         verbose=1,
         validation_data = validation_generator,
+        validation_steps = 1306,
         callbacks=callbacks,
     )
     history_dict = history.history
