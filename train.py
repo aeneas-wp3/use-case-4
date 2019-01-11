@@ -489,7 +489,7 @@ def main(args=None):
         callbacks=callbacks,
     )
     history_dict = history.history
-    json.dump(history_dict, open("/mnt/history.json", 'w'))
+    json.dump(str(history_dict), open("/mnt/history.json", 'w'))
 
 
 
