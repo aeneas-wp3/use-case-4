@@ -82,7 +82,7 @@ def model_with_weights(model, weights, skip_mismatch):
     return model
 
 
-def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0, freeze_backbone=False, lr=1e-5, config=None):
+def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0, freeze_backbone=False, lr=1e-5, opt='adam',config=None):
     """ Creates three models (model, training_model, prediction_model).
 
     Args
@@ -123,13 +123,18 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0, freeze_
     prediction_model = retinanet_bbox(model=model, anchor_params=anchor_params)
 
     # compile model
-    opt = keras.optimizers.Adam(lr=lr,amsgrad=True)
+    if opt =='adam':
+        optimizer = keras.optimizers.adam(lr=lr, clipnorm=0.001)
+    elif opt == 'amsgrad':
+        optimizer = keras.optimizers.Adam(lr=lr, amsgrad=True, clipnorm=0.001)
+    elif opt == 'rmsprop':
+        optimizer = keras.optimizers.RMSprop(lr=lr, clipnorm=0.001)
     training_model.compile(
         loss={
             'regression'    : losses.smooth_l1(),
             'classification': losses.focal()
         },
-        optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001)
+        optimizer=optimizer
     )
 
     return model, training_model, prediction_model
@@ -401,6 +406,7 @@ def parse_args(args):
     parser.add_argument('--epochs',           help='Number of epochs to train.', type=int, default=50)
     parser.add_argument('--steps',            help='Number of steps per epoch.', type=int, default=10000)
     parser.add_argument('--lr', help='Learning rate.', type=float, default=1e-5)
+    parser.add_argument('--opt', help='Optimizer. options are adam, amsgrad or rmsprop', default='adam')
     parser.add_argument('--snapshot-path',    help='Path to store snapshots of models during training (defaults to \'./snapshots\')', default='./snapshots')
     parser.add_argument('--tensorboard-dir',  help='Log directory for Tensorboard output', default='./logs')
     parser.add_argument('--no-snapshots',     help='Disable saving snapshots.', dest='snapshots', action='store_false')
@@ -461,7 +467,8 @@ def main(args=None):
             weights=weights,
             multi_gpu=args.multi_gpu,
             freeze_backbone=args.freeze_backbone,
-            lr=args.lr
+            lr=args.lr,
+            opt=args.opt,
             config=args.config
         )
 
