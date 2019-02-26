@@ -22,7 +22,7 @@ yum -y install cuda
 export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
 export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64
 curl -O http://developer.download.nvidia.com/compute/redist/cudnn/v7.0.5/cudnn-9.0-linux-x64-v7.tgz
-tar -zxf cudnn-9.0-linux-x64-v7.tgz 
+tar -zxf cudnn-9.0-linux-x64-v7.tgz
 cd cuda
 cp -av lib64/* /usr/local/cuda/lib64/
 cp -av include/* /usr/local/cuda/include/
@@ -37,14 +37,14 @@ virtualenv --system-site-packages /tensorflow
 virtualenv --system-site-packages -p python3.6 /tensorflow
 source /tensorflow/bin/activate
 easy_install -U pip
-pip3 install tensorflow-gpu==1.10.1
+pip3 install tensorflow-gpu
 deactivate
 yum -y install hdf5
 yum -y install hdf5-devel
 yum -y install h5py
 yum -y install graphviz
 source /tensorflow/bin/activate
-pip install keras==2.2.4
+pip install keras
 pip install progressbar2
 git clone https://github.com/TMCantwell/keras-retinanet.git
 cd keras-retinanet
